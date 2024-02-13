@@ -1,13 +1,16 @@
 package com.example.Wallet.entities;
 
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class WalletRequestModel {
-
-    private double money;
-
+    private Long walletId;
+    private Double money;
 }
