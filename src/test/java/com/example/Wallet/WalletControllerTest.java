@@ -21,6 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
@@ -110,5 +113,26 @@ class WalletControllerTest {
         when(walletService.withdraw(walletId, money))
                 .thenThrow(new InsufficientBalanceException("Insufficient balance"));
 
+    }
+
+    @Test
+    @WithMockUser(username = "user", roles = "USER")
+    void testGetWallets() throws Exception {
+        List<Wallet> mockWallets = Arrays.asList(
+                new Wallet(1L, new Money(100.0, Currency.INR)),
+                new Wallet(2L, new Money(50.0, Currency.INR))
+        );
+        when(walletService.getAllWallets()).thenReturn(mockWallets);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/wallets"))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                // Verifying the returned JSON content
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].id").value(1L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].money.amount").value(100.0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].money.currency").value("INR"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].id").value(2L))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].money.amount").value(50.0))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[1].money.currency").value("INR"));
     }
 }

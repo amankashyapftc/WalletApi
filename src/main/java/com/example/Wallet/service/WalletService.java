@@ -8,6 +8,8 @@ import com.example.Wallet.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class WalletService {
     @Autowired
@@ -34,6 +36,12 @@ public class WalletService {
     public Money checkBalance(Long id) {
         Wallet wallet = walletRepository.findById(id).orElseThrow(()->new RuntimeException("No wallet found with this id " + id));
         return wallet.getMoney();
+    }
+
+    public List<Wallet> getAllWallets() {
+        List<Wallet> walletList = walletRepository.findAll();
+        if(walletList.isEmpty()) throw new RuntimeException("No Wallets Available.");
+        return walletList;
     }
 }
 

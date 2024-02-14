@@ -8,6 +8,8 @@ import com.example.Wallet.service.WalletService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 public class WalletController {
     @Autowired
@@ -31,5 +33,10 @@ public class WalletController {
     @PutMapping("withdraw/{id}")
     public Wallet withdraw(@PathVariable Long id,@RequestBody WalletRequestModel walletRequestModel) throws InsufficientBalanceException, InvalidAmountException {
         return walletService.withdraw(id,walletRequestModel.getMoney());
+    }
+
+    @GetMapping("/wallets")
+    public List<Wallet> getWallets(){
+        return walletService.getAllWallets();
     }
 }
