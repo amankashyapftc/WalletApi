@@ -11,6 +11,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -74,6 +76,29 @@ public class WalletServiceTest {
         Money withdrawAmount = new Money(30.0,Currency.INR);
         assertThrows(InsufficientBalanceException.class, ()-> walletService.withdraw(1L,withdrawAmount));
         assertEquals(new Money(20.0, Currency.INR),wallet.getMoney());
+    }
+
+    @Test
+    void testGetAllWalletsWhenNotEmpty() throws InvalidAmountException {
+        List<Wallet> mockWalletList = new ArrayList<>();
+        mockWalletList.add(new Wallet(1L, new Money(100.0, Currency.INR)));
+        mockWalletList.add(new Wallet(2L, new Money(50.0, Currency.INR)));
+        when(walletRepository.findAll()).thenReturn(mockWalletList);
+
+        List<Wallet> result = walletService.getAllWallets();
+
+        assertEquals(2, result.size());
+        assertEquals(1L, result.get(0).getId());
+        assertEquals(new Money(100.0, Currency.INR), result.get(0).getMoney());
+        assertEquals(2L, result.get(1).getId());
+        assertEquals(new Money(50.0, Currency.INR), result.get(1).getMoney());
+    }
+
+    @Test
+    void testGetAllWalletsWhenEmpty() {
+        when(walletRepository.findAll()).thenReturn(new ArrayList<>());
+
+        assertThrows(RuntimeException.class, () -> walletService.getAllWallets());
     }
 
 }
