@@ -12,7 +12,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-@Embeddable
 @EqualsAndHashCode
 public class Money {
     private double amount;

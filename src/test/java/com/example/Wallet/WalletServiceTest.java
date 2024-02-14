@@ -35,18 +35,20 @@ public class WalletServiceTest {
 
     @Test
     public void testDeposit() throws InvalidAmountException {
-        Wallet wallet = new Wallet();
+        Wallet wallet = spy(new Wallet());
         when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
         Money depositAmount = new Money(20.0, Currency.INR);
         walletService.deposit(1L,depositAmount);
 
         verify(walletRepository,times(1)).save(wallet);
+        verify(wallet,times(1)).deposit(any());
+
         assertEquals(new Money(20.0, Currency.INR), wallet.getMoney());
     }
 
     @Test
     public void testWithdrawWhileHavingSufficientBalance() throws InvalidAmountException, InsufficientBalanceException {
-        Wallet wallet = new Wallet();
+        Wallet wallet = spy(new Wallet());
         when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
         Money depositAmount = new Money(20.0,Currency.INR);
         Money withdrawAmount = new Money(10.0,Currency.INR);
@@ -55,16 +57,20 @@ public class WalletServiceTest {
         walletService.withdraw(1L,withdrawAmount);
 
         verify(walletRepository,times(2)).save(wallet);
+        verify(wallet,times(1)).deposit(any());
+        verify(wallet,times(1)).withdraw(any());
     }
 
     @Test
     public void testWithdrawWhileHavingInsufficientBalance() throws InvalidAmountException {
-        Wallet wallet = new Wallet();
+        Wallet wallet = spy(new Wallet());
         when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
         Money depositAmount = new Money(20.0,Currency.INR);
         walletService.deposit(1L,depositAmount);
         assertEquals(new Money(20.0, Currency.INR), wallet.getMoney());
+
         verify(walletRepository,times(1)).save(wallet);
+
         Money withdrawAmount = new Money(30.0,Currency.INR);
         assertThrows(InsufficientBalanceException.class, ()-> walletService.withdraw(1L,withdrawAmount));
         assertEquals(new Money(20.0, Currency.INR),wallet.getMoney());
