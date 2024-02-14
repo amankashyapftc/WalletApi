@@ -21,7 +21,7 @@ public class WalletController {
         this.walletService = walletService;
     }
     @PostMapping("/")
-    public Wallet createWallet(){
+    public Wallet createWallet() throws InvalidAmountException {
         return walletService.createWallet();
     }
     @PutMapping("deposit/{id}")

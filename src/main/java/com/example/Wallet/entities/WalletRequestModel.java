@@ -12,5 +12,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class WalletRequestModel {
     private Long walletId;
-    private Double money;
+    private Money money;
 }

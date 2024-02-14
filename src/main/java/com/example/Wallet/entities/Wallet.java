@@ -1,11 +1,9 @@
 package com.example.Wallet.entities;
 
+import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -18,26 +16,18 @@ public class Wallet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private double balance;
+    @Embedded
+    private Money money;
 
-    public Wallet() {
-        this.balance = 0.0;
+    public Wallet() throws InvalidAmountException {
+        this.money = new Money(0.0, Currency.INR);
     }
 
-    public void deposit(double amount) throws InvalidAmountException {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Amount must be positive.");
-        }
-        balance += amount;
+    public void deposit(Money money) {
+       this.money.add(money);
     }
-    public void withdraw(double amount) throws InsufficientBalanceException, InvalidAmountException {
-        if (amount <= 0) {
-            throw new InvalidAmountException("Amount must be positive.");
-        }
-        if (amount > balance) {
-            throw new InsufficientBalanceException("Insufficient balance.");
-        }
-        balance -= amount;
+    public void withdraw(Money money) throws InsufficientBalanceException{
+        this.money.subtract(money);
     }
 
 }
