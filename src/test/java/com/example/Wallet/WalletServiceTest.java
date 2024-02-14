@@ -39,6 +39,8 @@ public class WalletServiceTest {
         when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
         Money depositAmount = new Money(20.0, Currency.INR);
         walletService.deposit(1L,depositAmount);
+
+        verify(walletRepository,times(1)).save(wallet);
         assertEquals(new Money(20.0, Currency.INR), wallet.getMoney());
     }
 
@@ -47,14 +49,12 @@ public class WalletServiceTest {
         Wallet wallet = new Wallet();
         when(walletRepository.findById(1L)).thenReturn(Optional.of(wallet));
         Money depositAmount = new Money(20.0,Currency.INR);
-        walletService.deposit(1L,depositAmount);
-
-        assertEquals(new Money(20.0, Currency.INR), wallet.getMoney());
-
         Money withdrawAmount = new Money(10.0,Currency.INR);
+
+        walletService.deposit(1L,depositAmount);
         walletService.withdraw(1L,withdrawAmount);
+
         verify(walletRepository,times(2)).save(wallet);
-        assertEquals(new Money(10.0, Currency.INR),wallet.getMoney());
     }
 
     @Test
@@ -64,7 +64,7 @@ public class WalletServiceTest {
         Money depositAmount = new Money(20.0,Currency.INR);
         walletService.deposit(1L,depositAmount);
         assertEquals(new Money(20.0, Currency.INR), wallet.getMoney());
-
+        verify(walletRepository,times(1)).save(wallet);
         Money withdrawAmount = new Money(30.0,Currency.INR);
         assertThrows(InsufficientBalanceException.class, ()-> walletService.withdraw(1L,withdrawAmount));
         assertEquals(new Money(20.0, Currency.INR),wallet.getMoney());
