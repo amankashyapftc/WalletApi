@@ -4,6 +4,7 @@ import com.example.Wallet.entities.Wallet;
 import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
+import com.example.Wallet.exceptions.NoWalletPresentException;
 import com.example.Wallet.repository.WalletRepository;
 import com.example.Wallet.service.WalletService;
 import org.junit.jupiter.api.Test;
@@ -79,7 +80,7 @@ public class WalletServiceTest {
     }
 
     @Test
-    void testGetAllWalletsWhenNotEmpty() throws InvalidAmountException {
+    void testGetAllWalletsWhenNotEmpty() throws InvalidAmountException, NoWalletPresentException {
         List<Wallet> mockWalletList = new ArrayList<>();
         mockWalletList.add(new Wallet(1L, new Money(100.0, Currency.INR)));
         mockWalletList.add(new Wallet(2L, new Money(50.0, Currency.INR)));

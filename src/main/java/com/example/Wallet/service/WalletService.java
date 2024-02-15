@@ -4,6 +4,7 @@ import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.Wallet;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
+import com.example.Wallet.exceptions.NoWalletPresentException;
 import com.example.Wallet.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,9 +39,9 @@ public class WalletService {
         return wallet.getMoney();
     }
 
-    public List<Wallet> getAllWallets() {
+    public List<Wallet> getAllWallets() throws NoWalletPresentException {
         List<Wallet> walletList = walletRepository.findAll();
-        if(walletList.isEmpty()) throw new RuntimeException("No Wallets Available.");
+        if(walletList.isEmpty()) throw new NoWalletPresentException("No Wallets Available.");
         return walletList;
     }
 }

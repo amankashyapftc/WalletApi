@@ -24,4 +24,11 @@ public class ErrorHandler {
         return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(NoWalletPresentException.class)
+    public ResponseEntity<ErrorDetails> noWalletPresentExceptionHandler(NoWalletPresentException exception, WebRequest request){
+        ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
 }
