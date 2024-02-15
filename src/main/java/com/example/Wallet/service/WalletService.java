@@ -2,6 +2,7 @@ package com.example.Wallet.service;
 
 import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.Wallet;
+import com.example.Wallet.entities.WalletResponseModel;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
 import com.example.Wallet.exceptions.NoWalletPresentException;
@@ -9,6 +10,7 @@ import com.example.Wallet.repository.WalletRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.AbstractList;
 import java.util.List;
 
 @Service
@@ -17,21 +19,24 @@ public class WalletService {
     private WalletRepository walletRepository;
 
 
-    public Wallet deposit(Long id, Money amount) throws InvalidAmountException {
+    public WalletResponseModel deposit(Long id, Money amount) throws InvalidAmountException {
         Wallet wallet = walletRepository.findById(id).orElseThrow(()->new RuntimeException("No wallet found with this id " + id));
         wallet.deposit(amount);
-        return walletRepository.save(wallet);
+        walletRepository.save(wallet);
+        return new WalletResponseModel(wallet.getId(),wallet.getMoney());
     }
 
-    public Wallet withdraw(Long id, Money amount) throws InsufficientBalanceException, InvalidAmountException {
+    public WalletResponseModel withdraw(Long id, Money amount) throws InsufficientBalanceException, InvalidAmountException {
         Wallet wallet = walletRepository.findById(id).orElseThrow(()->new RuntimeException("No wallet found with this id " + id));
         wallet.withdraw(amount);
-        return walletRepository.save(wallet);
+        walletRepository.save(wallet);
+        return new WalletResponseModel(wallet.getId(),wallet.getMoney());
     }
 
-    public Wallet createWallet() throws InvalidAmountException {
+    public WalletResponseModel createWallet() throws InvalidAmountException {
         Wallet wallet = new Wallet();
-        return walletRepository.save(wallet);
+        walletRepository.save(wallet);
+        return new WalletResponseModel(wallet.getId(), wallet.getMoney());
     }
 
     public Money checkBalance(Long id) {
@@ -39,9 +44,8 @@ public class WalletService {
         return wallet.getMoney();
     }
 
-    public List<Wallet> getAllWallets() throws NoWalletPresentException {
-        List<Wallet> walletList = walletRepository.findAll();
-        if(walletList.isEmpty()) throw new NoWalletPresentException("No Wallets Available.");
+    public List<WalletResponseModel> getAllWallets() throws NoWalletPresentException {
+        List<WalletResponseModel> walletList = walletRepository.findAll().stream().map(wallet -> new WalletResponseModel(wallet.getId(), wallet.getMoney())).toList();
         return walletList;
     }
 }

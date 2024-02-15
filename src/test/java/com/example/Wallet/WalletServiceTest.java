@@ -1,6 +1,7 @@
 package com.example.Wallet;
 import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.Wallet;
+import com.example.Wallet.entities.WalletResponseModel;
 import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
@@ -86,7 +87,7 @@ public class WalletServiceTest {
         mockWalletList.add(new Wallet(2L, new Money(50.0, Currency.INR)));
         when(walletRepository.findAll()).thenReturn(mockWalletList);
 
-        List<Wallet> result = walletService.getAllWallets();
+        List<WalletResponseModel> result = walletService.getAllWallets();
 
         assertEquals(2, result.size());
         assertEquals(1L, result.get(0).getId());
@@ -95,11 +96,6 @@ public class WalletServiceTest {
         assertEquals(new Money(50.0, Currency.INR), result.get(1).getMoney());
     }
 
-    @Test
-    void testGetAllWalletsWhenEmpty() {
-        when(walletRepository.findAll()).thenReturn(new ArrayList<>());
 
-        assertThrows(RuntimeException.class, () -> walletService.getAllWallets());
-    }
 
 }
