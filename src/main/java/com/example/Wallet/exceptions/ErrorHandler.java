@@ -31,4 +31,18 @@ public class ErrorHandler {
         return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorDetails> userAlreadyExistsExceptionHandler(UserAlreadyExistsException exception, WebRequest request){
+        ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(AuthenticationFailedException.class)
+    public ResponseEntity<ErrorDetails> authenticationFailedException(AuthenticationFailedException exception, WebRequest request){
+        ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
 }

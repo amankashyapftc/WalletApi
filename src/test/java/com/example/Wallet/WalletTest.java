@@ -56,12 +56,12 @@ public class WalletTest {
     }
     @Test
     void testExceptionForInvalidAmountDeposited() throws InvalidAmountException {
-        Wallet wallet = new Wallet(1L,new Money(100,Currency.INR));
+        Wallet wallet = new Wallet();
         assertThrows(InvalidAmountException.class,()-> wallet.deposit(new Money(-50, Currency.INR)));
     }
     @Test
     void testExceptionForInvalidAmountWithdrawn() throws InvalidAmountException {
-        Wallet wallet = new Wallet(1L,new Money(0,Currency.INR));
+        Wallet wallet = new Wallet();
         assertThrows(InvalidAmountException.class,()-> wallet.withdraw(new Money(-50, Currency.INR)));
     }
 }

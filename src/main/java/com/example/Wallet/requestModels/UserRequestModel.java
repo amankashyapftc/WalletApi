@@ -1,4 +1,4 @@
-package com.example.Wallet.entities;
+package com.example.Wallet.requestModels;
 
 
 import lombok.AllArgsConstructor;
@@ -10,7 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class WalletRequestModel {
-    private Long walletId;
-    private Money money;
+public class UserRequestModel {
+
+    private String userName;
+    private String password;
+
 }

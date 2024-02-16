@@ -1,14 +1,11 @@
-package com.example.Wallet.entities;
+package com.example.Wallet.responseModels;
 
+import com.example.Wallet.entities.Money;
 import lombok.*;
-
-import java.util.AbstractList;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletResponseModel {
-    private Long id;
     private Money money;
 }
