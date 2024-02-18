@@ -1,5 +1,6 @@
 package com.example.Wallet.entities;
 
+import com.example.Wallet.exceptions.InvalidAmountException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -26,9 +27,9 @@ public class User {
     @OneToOne(cascade = CascadeType.ALL)
     private Wallet wallet;
 
-    public User(String userName, String password, Wallet wallet) {
+    public User(String userName, String password) throws InvalidAmountException {
         this.userName = userName;
         this.password = password;
-        this.wallet = wallet;
+        this.wallet = new Wallet();
     }
 }

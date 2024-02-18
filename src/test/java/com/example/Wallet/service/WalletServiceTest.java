@@ -1,4 +1,4 @@
-package com.example.Wallet;
+package com.example.Wallet.service;
 import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.User;
 import com.example.Wallet.entities.Wallet;
@@ -81,7 +81,7 @@ public class WalletServiceTest {
     public void testWithdrawWhileHavingSufficientBalance() throws InvalidAmountException, InsufficientBalanceException, AuthenticationFailedException {
         Wallet wallet = new Wallet();
         wallet.deposit(new Money(100, Currency.INR));
-        User user = new User("test", "testPassword", wallet);
+        User user = new User("test", "testPassword");
 
         when(userRepository.findByUserName("testUser")).thenReturn(Optional.of(user));
         when(userRepository.save(any())).thenReturn(user);
@@ -107,7 +107,7 @@ public class WalletServiceTest {
 
     @Test
     public void testWithdrawWhileHavingInsufficientBalance() throws InvalidAmountException {
-        User user = new User("test", "testPassword", new Wallet());
+        User user = new User("test", "testPassword");
         when(userRepository.findByUserName("test")).thenReturn(Optional.of(user));
         WalletRequestModel requestModel = new WalletRequestModel(new Money(50, Currency.INR));
 

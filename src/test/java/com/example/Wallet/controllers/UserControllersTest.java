@@ -1,4 +1,4 @@
-package com.example.Wallet;
+package com.example.Wallet.controllers;
 
 import com.example.Wallet.entities.User;
 import com.example.Wallet.entities.Wallet;
@@ -40,11 +40,11 @@ public class UserControllersTest {
     @Test
     void testUserCreatedSuccessFully() throws Exception {
         UserRequestModel userRequestModel = new UserRequestModel("testUser", "testPassword");
-        User user = new User("testUser", "testPassword", new Wallet());
+        User user = new User("testUser", "testPassword");
 
         when(userService.register(userRequestModel)).thenReturn(user);
 
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestModel)))
                 .andExpect(status().isCreated());
@@ -54,11 +54,11 @@ public class UserControllersTest {
     @Test
     void testRegisterAgainWithSameUserGivesBadRequestAndUserServiceNeverCalled() throws Exception {
         UserRequestModel userRequestModel = new UserRequestModel("testUser","testPassword");
-        User user = new User("testUser", "testPassword", new Wallet());
+        User user = new User("testUser", "testPassword");
 
         when(userService.register(any(UserRequestModel.class))).thenThrow(UserAlreadyExistsException.class);
 
-        mockMvc.perform(post("/users")
+        mockMvc.perform(post("/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestModel)))
                 .andExpect(status().isBadRequest());

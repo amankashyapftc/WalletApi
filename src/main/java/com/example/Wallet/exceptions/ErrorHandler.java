@@ -39,7 +39,14 @@ public class ErrorHandler {
     }
 
     @ExceptionHandler(AuthenticationFailedException.class)
-    public ResponseEntity<ErrorDetails> authenticationFailedException(AuthenticationFailedException exception, WebRequest request){
+    public ResponseEntity<ErrorDetails> authenticationFailedExceptionHandler(AuthenticationFailedException exception, WebRequest request){
+        ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(UserNotFoundException.class)
+    public ResponseEntity<ErrorDetails> userNotFoundExceptionHandler(UserNotFoundException exception, WebRequest request){
         ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
 
         return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);

@@ -1,4 +1,4 @@
-package com.example.Wallet;
+package com.example.Wallet.entity;
 
 import com.example.Wallet.entities.Money;
 import com.example.Wallet.enums.Currency;

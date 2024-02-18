@@ -1,4 +1,4 @@
-package com.example.Wallet;
+package com.example.Wallet.controllers;
 
 import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.Wallet;
