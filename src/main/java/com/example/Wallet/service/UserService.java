@@ -1,7 +1,9 @@
 package com.example.Wallet.service;
 
 import com.example.Wallet.entities.User;
+import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.UserNotFoundException;
+import com.example.Wallet.requestModels.TransactionRequestModel;
 import com.example.Wallet.requestModels.UserRequestModel;
 import com.example.Wallet.entities.Wallet;
 import com.example.Wallet.exceptions.InvalidAmountException;
@@ -9,6 +11,7 @@ import com.example.Wallet.exceptions.UserAlreadyExistsException;
 import com.example.Wallet.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,6 +21,9 @@ import java.util.Optional;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private WalletService walletService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -38,6 +44,19 @@ public class UserService {
 
         userRepository.delete(userToDelete.get());
         return "User " + username + " deleted successfully.";
+    }
+
+    public String transact(TransactionRequestModel requestModel) throws InsufficientBalanceException, InvalidAmountException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User sender = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User "+ username + " not found."));
+        User receiver = userRepository.findByUserName(requestModel.getReceiverName()).orElseThrow(() -> new UsernameNotFoundException("User "+ requestModel.getReceiverName() + " not found."));
+
+        walletService.transact(sender.getWallet(), receiver.getWallet(), requestModel.getMoney());
+
+        userRepository.save(sender);
+        userRepository.save(receiver);
+
+        return "Transaction SuccessFull.";
     }
 
 }

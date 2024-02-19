@@ -2,7 +2,9 @@ package com.example.Wallet.controllers;
 
 
 import com.example.Wallet.entities.User;
+import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.UserNotFoundException;
+import com.example.Wallet.requestModels.TransactionRequestModel;
 import com.example.Wallet.requestModels.UserRequestModel;
 import com.example.Wallet.exceptions.InvalidAmountException;
 import com.example.Wallet.exceptions.UserAlreadyExistsException;
@@ -32,6 +34,12 @@ public class UserController {
     @DeleteMapping("")
     public ResponseEntity<String> deleteUser() throws UserNotFoundException {
         String response = userService.delete();
+        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+    }
+
+    @PutMapping("/transact")
+    public ResponseEntity<String> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, InsufficientBalanceException {
+        String response = userService.transact(transactionRequestModel);
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 }

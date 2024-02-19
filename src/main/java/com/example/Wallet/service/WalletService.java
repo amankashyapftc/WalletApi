@@ -58,5 +58,10 @@ public class WalletService {
         List<WalletResponseModel> walletList = walletRepository.findAll().stream().map(wallet -> new WalletResponseModel(wallet.getMoney())).toList();
         return walletList;
     }
+
+    public void transact(Wallet senderWallet, Wallet receiverWallet, Money money) throws InsufficientBalanceException, InvalidAmountException {
+        senderWallet.withdraw(money);
+        receiverWallet.deposit(money);
+    }
 }
 

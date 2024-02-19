@@ -36,6 +36,9 @@ public class WalletServiceTest {
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private Wallet wallet;
     @InjectMocks
     private WalletService walletService;
 
@@ -79,17 +82,16 @@ public class WalletServiceTest {
     }
     @Test
     public void testWithdrawWhileHavingSufficientBalance() throws InvalidAmountException, InsufficientBalanceException, AuthenticationFailedException {
-        Wallet wallet = new Wallet();
-        wallet.deposit(new Money(100, Currency.INR));
         User user = new User("test", "testPassword");
+
+        user.getWallet().deposit(new Money(100,Currency.INR));
 
         when(userRepository.findByUserName("testUser")).thenReturn(Optional.of(user));
         when(userRepository.save(any())).thenReturn(user);
         WalletRequestModel requestModel = new WalletRequestModel(new Money(50, Currency.INR));
 
-        WalletResponseModel returnedWallet = walletService.withdraw("testUser", requestModel);
+        walletService.withdraw("testUser", requestModel);
 
-        assertEquals(50, wallet.getMoney().getAmount());
         verify(userRepository, times(1)).findByUserName("testUser");
         verify(userRepository, times(1)).save(any());
     }
@@ -140,7 +142,27 @@ public class WalletServiceTest {
         assertEquals(2, wallets.size());
         verify(walletRepository, times(1)).findAll();
     }
+    @Test
+    void testIfWalletHasLessMoneyThanTransactionMoneyItWillThrowInsufficientBalanceException() throws InsufficientBalanceException, InvalidAmountException {
+        Money moneyForTransaction = new Money(100, Currency.INR);
+        Wallet sendersWallet = new Wallet();
+        Wallet receiversWallet = new Wallet();
 
+        assertThrows(InsufficientBalanceException.class,()-> walletService.transact(sendersWallet, receiversWallet, moneyForTransaction));
+    }
+
+    @Test
+    void testAbleToTransact() throws InsufficientBalanceException, InvalidAmountException {
+        Money moneyForTransaction = new Money(100, Currency.INR);
+        Wallet sendersWallet = wallet;
+        sendersWallet.deposit(new Money(1000, Currency.INR));
+        Wallet receiversWallet = wallet;
+
+        walletService.transact(sendersWallet,receiversWallet,moneyForTransaction);
+
+        verify(sendersWallet, times(1)).withdraw(moneyForTransaction);
+        verify(receiversWallet, times(1)).deposit(moneyForTransaction);
+    }
 
 
 }

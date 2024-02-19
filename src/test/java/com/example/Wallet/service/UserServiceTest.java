@@ -1,11 +1,15 @@
 package com.example.Wallet.service;
 
+import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.User;
 import com.example.Wallet.entities.Wallet;
+import com.example.Wallet.enums.Currency;
+import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
 import com.example.Wallet.exceptions.UserAlreadyExistsException;
 import com.example.Wallet.exceptions.UserNotFoundException;
 import com.example.Wallet.repository.UserRepository;
+import com.example.Wallet.requestModels.TransactionRequestModel;
 import com.example.Wallet.requestModels.UserRequestModel;
 import com.example.Wallet.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -38,6 +42,8 @@ public class UserServiceTest {
 
     @Mock
     private Authentication authentication;
+    @Mock
+    private WalletService walletService;
 
     @InjectMocks
     private UserService userService;
@@ -104,5 +110,23 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> userService.delete());
         verify(userRepository, times(1)).findByUserName(username);
         verify(userRepository, never()).delete(any());
+    }
+
+    @Test
+    void expectTransactionSuccessful() throws InsufficientBalanceException, InvalidAmountException {
+        User sender = new User("sender", "senderPassword");
+        User receiver = new User("receiver", "receiverPassword");
+        TransactionRequestModel requestModel = new TransactionRequestModel("receiver", new Money(100.0, Currency.INR));
+        when(authentication.getName()).thenReturn("sender");
+        when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+        when(userRepository.findByUserName("sender")).thenReturn(Optional.of(sender));
+        when(userRepository.findByUserName("receiver")).thenReturn(Optional.of(receiver));
+
+        userService.transact(requestModel);
+
+        verify(walletService, times(1)).transact(sender.getWallet(), receiver.getWallet(), requestModel.getMoney());
+        verify(userRepository, times(1)).save(sender);
+        verify(userRepository, times(1)).save(receiver);
     }
 }

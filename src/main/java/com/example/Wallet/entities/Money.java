@@ -4,6 +4,7 @@ import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -17,7 +18,7 @@ import lombok.Setter;
 public class Money {
     private double amount;
 
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Currency currency;
 
     public Money(double amount, Currency currency) throws InvalidAmountException {
