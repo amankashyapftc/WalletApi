@@ -51,7 +51,7 @@ class WalletControllerTest {
     void testAbleCreateWallet() throws Exception {
         WalletRequestModel requestModel = new WalletRequestModel(new Money(0.0, Currency.INR));
         String requestBody = objectMapper.writeValueAsString(requestModel);
-        mockMvc.perform(MockMvcRequestBuilders.post("/")
+        mockMvc.perform(MockMvcRequestBuilders.post("/wallet")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isOk());
@@ -67,7 +67,7 @@ class WalletControllerTest {
         WalletResponseModel responseModel = new WalletResponseModel(new Money(100, Currency.INR));
         when(walletService.deposit(anyString(), any())).thenReturn(responseModel);
 
-        mockMvc.perform(put("/deposit")
+        mockMvc.perform(put("/wallet/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestModel)))
                 .andExpect(status().isAccepted())
@@ -83,7 +83,7 @@ class WalletControllerTest {
         WalletResponseModel responseModel = new WalletResponseModel(new Money(50, Currency.INR));
         when(walletService.withdraw(anyString(), any())).thenReturn(responseModel);
 
-        mockMvc.perform(put("/withdraw")
+        mockMvc.perform(put("/wallet/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isAccepted())
@@ -99,7 +99,7 @@ class WalletControllerTest {
         WalletResponseModel secondWallet = new WalletResponseModel();
         when(walletService.getAllWallets()).thenReturn(Arrays.asList(firstWallet, secondWallet));
 
-        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/wallets"))
+        MvcResult result = mockMvc.perform(MockMvcRequestBuilders.get("/wallet"))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
                 .andReturn();

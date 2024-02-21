@@ -37,9 +37,4 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
     }
 
-    @PutMapping("/transact")
-    public ResponseEntity<String> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, InsufficientBalanceException {
-        String response = userService.transact(transactionRequestModel);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-    }
 }

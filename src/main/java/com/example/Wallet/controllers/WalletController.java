@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@RequestMapping("/wallet")
 public class WalletController {
     @Autowired
     private WalletService walletService;
@@ -32,7 +33,7 @@ public class WalletController {
     }
 
 
-    @PostMapping("/")
+    @PostMapping("")
     public ResponseEntity<WalletResponseModel> createWallet() throws InvalidAmountException {
         return ResponseEntity.ok(walletService.createWallet());
     }
@@ -56,7 +57,7 @@ public class WalletController {
         return new ResponseEntity<WalletResponseModel>(returnedResponse, HttpStatus.ACCEPTED);
     }
 
-    @GetMapping("/wallets")
+    @GetMapping("")
     public ResponseEntity<List<WalletResponseModel>>  getWallets() throws NoWalletPresentException {
         return ResponseEntity.ok(walletService.getAllWallets());
     }

@@ -3,7 +3,6 @@ package com.example.Wallet.entities;
 import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
-import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.EqualsAndHashCode;
