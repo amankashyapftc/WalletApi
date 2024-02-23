@@ -7,5 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WalletResponseModel {
+    private Long walletId;
     private Money money;
 }

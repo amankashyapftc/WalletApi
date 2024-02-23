@@ -28,11 +28,10 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    public User register(UserRequestModel user) throws UserAlreadyExistsException, InvalidAmountException {
-
+    public User register(UserRequestModel user) throws UserAlreadyExistsException {
         if(userRepository.findByUserName(user.getUserName()).isPresent())
-            throw new UserAlreadyExistsException("Username already exists.");
-        User userToSave = new User(user.getUserName(), passwordEncoder.encode(user.getPassword()));
+            throw new UserAlreadyExistsException("User Already Exists.");
+        User userToSave = new User(user.getUserName(), passwordEncoder.encode(user.getPassword()), user.getCountry());
         return userRepository.save(userToSave);
     }
 
@@ -43,20 +42,18 @@ public class UserService {
             throw new UserNotFoundException("User could not be found.");
 
         userRepository.delete(userToDelete.get());
-        return "User " + username + " deleted successfully.";
+        return "User deleted successfully.";
     }
 
-    public String transact(TransactionRequestModel requestModel) throws InsufficientBalanceException, InvalidAmountException {
+    public User addWallet(Long userId) throws UserNotFoundException {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User sender = userRepository.findByUserName(username).orElseThrow(() -> new UsernameNotFoundException("User "+ username + " not found."));
-        User receiver = userRepository.findByUserName(requestModel.getReceiverName()).orElseThrow(() -> new UsernameNotFoundException("User "+ requestModel.getReceiverName() + " not found."));
+        User user = userRepository.findByUserName(username).orElseThrow(() -> new UserNotFoundException("User Not Found."));
+        if(user.getUserId() != userId)
+            throw new UserNotFoundException("Invalid User Id.");
 
-        walletService.transact(sender.getWallet(), receiver.getWallet(), requestModel.getMoney());
-
-        userRepository.save(sender);
-        userRepository.save(receiver);
-
-        return "Transaction SuccessFull.";
+        user.getWallets().add(new Wallet(user.getCountry()));
+        return userRepository.save(user);
     }
+
 
 }

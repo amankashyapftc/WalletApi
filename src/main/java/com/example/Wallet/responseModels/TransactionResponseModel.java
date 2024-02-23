@@ -13,7 +13,9 @@ import java.time.LocalDateTime;
 public class TransactionResponseModel {
     private LocalDateTime timestamp;
     private String sender;
+    private Long senderWalletId;
     private String receiver;
+    private Long receiverWalletId;
     private Money money;
 
 }

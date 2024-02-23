@@ -1,9 +1,8 @@
 package com.example.Wallet.controllers;
 
-import com.example.Wallet.exceptions.InsufficientBalanceException;
-import com.example.Wallet.exceptions.InvalidAmountException;
-import com.example.Wallet.exceptions.UserNotFoundException;
+import com.example.Wallet.exceptions.*;
 import com.example.Wallet.requestModels.TransactionRequestModel;
+import com.example.Wallet.responseModels.ResponseMessageModel;
 import com.example.Wallet.responseModels.TransactionResponseModel;
 import com.example.Wallet.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +19,10 @@ public class TransactionController {
     @Autowired
     private TransactionService transactionService;
 
-    @PostMapping("/transact")
-    public ResponseEntity<String> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException {
+    @PostMapping("/transfer")
+    public ResponseEntity<ResponseMessageModel> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, WalletNotFoundException, SameWalletsForTransactionException {
         String response = transactionService.transact(transactionRequestModel);
-        return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(new ResponseMessageModel(response), HttpStatus.ACCEPTED);
     }
 
     @GetMapping

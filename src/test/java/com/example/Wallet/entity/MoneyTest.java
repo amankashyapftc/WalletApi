@@ -6,55 +6,91 @@ import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class MoneyTest {
     @Test
-    public void addValidMoney() throws InvalidAmountException {
-        Money money = new Money(100, Currency.INR);
-        Money money1 = new Money(100, Currency.INR);
-        money.add(money1);
-        assertEquals(money, new Money(200.0,Currency.INR));
+    void testMoneyCreated() {
+        assertDoesNotThrow(()-> new Money(10, Currency.INR));
     }
 
     @Test
-    public void addTwoValidDifferentMoney() throws InvalidAmountException {
-        Money money = new Money(100, Currency.INR);
-        Money money1 = new Money(100, Currency.USD);
-        money.add(money1);
+    void testMoney100Added() throws InvalidAmountException {
+        Money money = new Money(0,Currency.INR);
 
-        assertEquals(money, new Money(8400.0,Currency.INR));
+        money.add(new Money(100, Currency.INR));
+
+        assertEquals(new Money(100, Currency.INR), money);
     }
 
     @Test
-    public void moneyWithNegativeAmount() {
-        assertThrows(InvalidAmountException.class, () -> new Money(-100, Currency.INR));
+    void testMoney50Added() throws InvalidAmountException {
+        Money money = new Money(0,Currency.INR);
+
+        money.add(new Money(50, Currency.INR));
+
+        assertEquals(new Money(50, Currency.INR), money);
     }
 
     @Test
-    public void subtractValidMoney() throws InsufficientBalanceException, InvalidAmountException {
-        Money money = new Money(100, Currency.INR);
-        Money money1 = new Money(100, Currency.INR);
-        money.subtract(money1);
+    void testMoney100USDAdded() throws InvalidAmountException {
+        Money money = new Money(0,Currency.INR);
 
-        assertEquals(money, new Money(0.0,Currency.INR));
+        money.add(new Money(100, Currency.USD));
+
+        assertEquals(new Money(8310, Currency.INR), money);
+    }
+
+
+    @Test
+    void testMoney100INRSubtracted() throws InvalidAmountException, InsufficientBalanceException {
+        Money money = new Money(100,Currency.INR);
+
+        money.subtract(new Money(50, Currency.INR));
+
+        assertEquals(new Money(50, Currency.INR), money);
     }
 
     @Test
-    public void subtractTwoValidDifferentMoney() throws InvalidAmountException, InsufficientBalanceException {
-        Money money = new Money(100, Currency.INR);
-        Money money1 = new Money(1, Currency.USD);
-        money.subtract(money1);
+    void testMoney100USDSubtracted() throws InvalidAmountException, InsufficientBalanceException {
+        Money money = new Money(0,Currency.INR);
+        money.add(new Money(100, Currency.USD));
 
-        assertEquals(money,new Money(17.0,Currency.INR));
+        money.subtract(new Money(100, Currency.USD));
+
+        assertEquals(new Money(0.0, Currency.INR), money);
+    }
+
+
+    @Test
+    void testExceptionForInsufficientBalance() {
+        Money money = new Money(10,Currency.INR);
+
+        assertThrows(InsufficientBalanceException.class, ()-> money.subtract(new Money(50, Currency.INR)));
     }
 
     @Test
-    public void subtractMoneyFromLesserMoney() throws InvalidAmountException {
-        Money money = new Money(100, Currency.INR);
-        Money money1 = new Money(100, Currency.USD);
+    void testExceptionAddingNegativeMoney() {
+        Money money = new Money(100,Currency.INR);
 
-        assertThrows(InsufficientBalanceException.class, () -> money.subtract(money1));
+        assertThrows(InvalidAmountException.class, ()-> money.subtract(new Money(-50, Currency.INR)));
     }
+
+    @Test
+    void test1USDWhenAdding83_10INR() throws InvalidAmountException {
+        Money money = new Money(0.0, Currency.USD);
+
+        money.add(new Money(83.10, Currency.INR));
+
+        assertEquals(new Money(1.0, Currency.USD), money);
+    }
+
+
+    @Test
+    void testExceptionWhenSubtracting1EURFrom1USD() throws InvalidAmountException, InsufficientBalanceException {
+        Money money = new Money(0.0, Currency.USD);
+
+        assertThrows(InsufficientBalanceException.class, ()-> money.subtract(new Money(1, Currency.USD)));
+    }
+
 }
