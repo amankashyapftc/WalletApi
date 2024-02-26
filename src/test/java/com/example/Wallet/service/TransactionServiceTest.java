@@ -63,7 +63,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void expectTransactionSuccessful() throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, SameWalletsForTransactionException, WalletNotFoundException {
+    void expectTransactionSuccessful() throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, SameWalletsForTransactionException, WalletNotFoundException, CurrencyMismatchException {
         Wallet senderWallet = spy(new Wallet(1L, new Money(0, Currency.INR)));
         Wallet receiverWallet = spy(new Wallet(2L, new Money(0, Currency.INR)));
         senderWallet.deposit(new Money(100.0,Currency.INR));
@@ -161,7 +161,7 @@ public class TransactionServiceTest {
     }
 
     @Test
-    void expectTransactionSuccessfulForTwoDifferentWallets() throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, SameWalletsForTransactionException, WalletNotFoundException {
+    void expectTransactionSuccessfulForTwoDifferentWallets() throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, SameWalletsForTransactionException, WalletNotFoundException, CurrencyMismatchException {
         Wallet firstSenderWallet = spy(new Wallet(1L, new Money(0, Currency.INR)));
         Wallet secondSenderWallet = spy(new Wallet(2L, new Money(0, Currency.INR)));
         firstSenderWallet.deposit(new Money(100.0,Currency.INR));
@@ -189,8 +189,8 @@ public class TransactionServiceTest {
         when(authentication.getName()).thenReturn("sender");
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR), sender, 1L, receiver, 2L);
-        Transaction secondTransaction = new Transaction(LocalDateTime.now(),new Money(200, Currency.INR), sender, 1L,receiver, 2L);
+        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR), sender, 1L,  receiver,2L,0.0);
+        Transaction secondTransaction = new Transaction(LocalDateTime.now(),new Money(200, Currency.INR), sender, 1L,receiver, 2L,0.0);
         List<Transaction> transactions = Arrays.asList(firstTransaction, secondTransaction);
         when(userRepository.findByUserName("sender")).thenReturn(Optional.of(sender));
         when(transactionRepository.findTransactionsOfUser(sender)).thenReturn(transactions);
@@ -208,7 +208,7 @@ public class TransactionServiceTest {
         User receiver = new User("receiver", "receiverPassword", Country.INDIA);
         LocalDateTime startDate = LocalDate.of(2022, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(2022, 1, 31).atTime(23, 59, 59);
-        Transaction transaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L);
+        Transaction transaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
         when(authentication.getName()).thenReturn("sender");
@@ -229,8 +229,8 @@ public class TransactionServiceTest {
         User receiver = new User("receiver", "receiverPassword", Country.INDIA);
         LocalDateTime startDate = LocalDate.of(2022, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(2022, 1, 31).atTime(23, 59, 59);
-        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L);
-        Transaction secondTransaction = new Transaction(LocalDateTime.now().minusDays(2), new Money(100, Currency.INR) , sender, 1L, receiver, 2L);
+        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
+        Transaction secondTransaction = new Transaction(LocalDateTime.now().minusDays(2), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
         List<Transaction> allTransactions = new ArrayList<>();
         allTransactions.add(firstTransaction);
         allTransactions.add(secondTransaction);

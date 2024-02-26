@@ -17,5 +17,6 @@ public class TransactionResponseModel {
     private String receiver;
     private Long receiverWalletId;
     private Money money;
+    private Double serviceFees;
 
 }

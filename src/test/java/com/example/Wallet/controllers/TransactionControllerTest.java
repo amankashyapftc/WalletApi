@@ -62,7 +62,7 @@ public class TransactionControllerTest {
     void testAllTransactionsOfUser() throws Exception {
         TransactionRequestModel transactionRequestModel = new TransactionRequestModel(1L,"receiver",2L, new Money(100, Currency.INR));
         String requestJson = objectMapper.writeValueAsString(transactionRequestModel);
-        when(transactionService.allTransactions()).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now(),"sender",1L,"receiver",2L, new Money(100, Currency.INR))));
+        when(transactionService.allTransactions()).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now(),"sender",1L,"receiver",2L, new Money(100, Currency.INR),0.0)));
 
         mockMvc.perform(get("/transactions")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -72,10 +72,10 @@ public class TransactionControllerTest {
     }
 
     @Test
-    void testUnauthorizedForAllTransactions() throws Exception {
+    void testUnauthorizedForAllTransactionsIsAIsUnAuthorisedRequest() throws Exception {
         TransactionRequestModel transactionRequestModel = new TransactionRequestModel(1L,"receiver",2L, new Money(100, Currency.INR));
         String requestJson = objectMapper.writeValueAsString(transactionRequestModel);
-        when(transactionService.allTransactions()).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now(),"sender",1L,"receiver",2L, new Money(100, Currency.INR))));
+        when(transactionService.allTransactions()).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now(),"sender",1L,"receiver",2L, new Money(100, Currency.INR),0.0)));
 
         mockMvc.perform(get("/transactions")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -90,8 +90,8 @@ public class TransactionControllerTest {
         LocalDate startDate = LocalDate.of(2022, 1, 1);
         LocalDate endDate = LocalDate.of(2022, 1, 31);
         List<TransactionResponseModel> mockResponse = Arrays.asList(
-                new TransactionResponseModel(LocalDateTime.now(),"sender", 1L, "receiver1", 2L, new Money(100, Currency.INR)),
-                new TransactionResponseModel(LocalDateTime.now(),"sender", 1L, "receiver2", 3L, new Money(200, Currency.INR))
+                new TransactionResponseModel(LocalDateTime.now(),"sender", 1L, "receiver1", 2L, new Money(100, Currency.INR),0.0),
+                new TransactionResponseModel(LocalDateTime.now(),"sender", 1L, "receiver2", 3L, new Money(200, Currency.INR),0.0)
         );
         when(transactionService.allTransactionsDateBased(startDate, endDate)).thenReturn(mockResponse);
 
@@ -111,10 +111,10 @@ public class TransactionControllerTest {
     }
 
     @Test
-    void testUnauthorizedForAllTransactionsDateBased() throws Exception {
+    void testUnauthorizedForAllTransactionsDateBasedIsAIsUnAuthorisedRequest() throws Exception {
         TransactionRequestModel transactionRequestModel = new TransactionRequestModel(1L, "receiver", 2L, new Money(100, Currency.INR));
         String requestJson = objectMapper.writeValueAsString(transactionRequestModel);
-        when(transactionService.allTransactionsDateBased(LocalDate.now(), LocalDate.now())).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now() ,"sender1", 1L, "receiver1",2L, new Money(100, Currency.INR))));
+        when(transactionService.allTransactionsDateBased(LocalDate.now(), LocalDate.now())).thenReturn(Arrays.asList(new TransactionResponseModel(LocalDateTime.now() ,"sender1", 1L, "receiver1",2L, new Money(),0.0)));
 
         mockMvc.perform(get("/transactions")
                         .contentType(MediaType.APPLICATION_JSON)

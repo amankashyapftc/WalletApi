@@ -21,19 +21,22 @@ public class Money {
     private Currency currency;
 
     public void add(Money money) throws InvalidAmountException {
-        if((money.amount/this.currency.getConversionFactor()) * money.currency.getConversionFactor() <= 0)
+        if(money.getAmount()<= 0)
             throw new InvalidAmountException("Amount must be positive.");
 
-        this.amount += (money.amount/this.currency.getConversionFactor()) * money.currency.getConversionFactor();
+        this.amount += money.getAmount();
+        this.amount = Math.round(this.amount * 100.0) / 100.0;
+
     }
 
     public void subtract(Money money) throws InvalidAmountException, InsufficientBalanceException {
-        if((money.amount/this.currency.getConversionFactor()) * money.currency.getConversionFactor() > this.amount)
+        if(money.getAmount() > this.amount)
             throw new InsufficientBalanceException("Insufficient Balance..");
 
-        if((money.amount/this.currency.getConversionFactor()) * money.currency.getConversionFactor() <= 0)
+        if(money.getAmount()<= 0)
             throw new InvalidAmountException("Amount must be positive.");
 
-        this.amount -= (money.amount/this.currency.getConversionFactor()) * money.currency.getConversionFactor();
+        this.amount -= money.getAmount();
+        this.amount = Math.round(this.amount * 100.0) / 100.0;
     }
 }

@@ -84,7 +84,7 @@ public class UserControllersTest {
 
     @Test
     @WithMockUser(username = "userNotFound")
-    void testUserNotFoundException() throws Exception {
+    void testUserNotFoundExceptionIsABadRequest() throws Exception {
         String username = "userNotFound";
         String errorMessage = "User "+username+" not be found.";
 
@@ -111,7 +111,7 @@ public class UserControllersTest {
 
     @Test
     @WithMockUser(username = "user")
-    void testUserNotFoundWhenWalletAdded() throws Exception {
+    void testUserNotFoundWhenWalletAddedIsABadRequest() throws Exception {
         User user = new User(1L, "user", "pass",Country.INDIA, Arrays.asList(new Wallet(1L, new Money(0.0,Currency.INR))));
         when(userService.addWallet(2L)).thenThrow(UserNotFoundException.class);
 

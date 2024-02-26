@@ -34,12 +34,15 @@ public class Transaction {
 
     private Long receiverWalletId;
 
-    public Transaction(LocalDateTime timestamp, Money money, User sender, Long senderWalletId, User receiver, Long receiverWalletId) {
+    private double serviceFees;
+
+    public Transaction(LocalDateTime timestamp, Money money, User sender, Long senderWalletId, User receiver, Long receiverWalletId,Double serviceFees) {
         this.timestamp = timestamp;
         this.money = money;
         this.sender = sender;
         this.senderWalletId = senderWalletId;
         this.receiver = receiver;
         this.receiverWalletId = receiverWalletId;
+        this.serviceFees = serviceFees;
     }
 }

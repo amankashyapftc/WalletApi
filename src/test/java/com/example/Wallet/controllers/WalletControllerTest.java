@@ -61,7 +61,7 @@ class WalletControllerTest {
     }
 
     @Test
-    void testUnauthorizedOnDeposit() throws Exception {
+    void testUnauthorizedOnDepositIsAIsUnAuthorisedRequest() throws Exception {
         WalletRequestModel requestModel = new WalletRequestModel(new Money(100, Currency.INR));
         WalletResponseModel responseModel = new WalletResponseModel(1L, new Money(100, Currency.INR));
         when(walletService.deposit(anyLong(), anyString(), any())).thenReturn(responseModel);
@@ -90,7 +90,7 @@ class WalletControllerTest {
     }
 
     @Test
-    void testUnauthorizedOnWithdrawal() throws Exception {
+    void testUnauthorizedOnWithdrawalIsAIsUnAuthorisedRequest() throws Exception {
         WalletRequestModel requestModel = new WalletRequestModel(new Money(50, Currency.INR));
         String requestBody = objectMapper.writeValueAsString(requestModel);
 
@@ -119,7 +119,7 @@ class WalletControllerTest {
     }
 
     @Test
-    void testUnauthorizedForWalletList() throws Exception {
+    void testUnauthorizedForWalletListIsAIsUnAuthorisedRequest() throws Exception {
         WalletResponseModel firstWallet = new WalletResponseModel();
         WalletResponseModel secondWallet = new WalletResponseModel();
         when(walletService.getAllWallets()).thenReturn(Arrays.asList(firstWallet, secondWallet));

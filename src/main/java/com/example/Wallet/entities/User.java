@@ -1,7 +1,6 @@
 package com.example.Wallet.entities;
 
 import com.example.Wallet.enums.Country;
-import com.example.Wallet.exceptions.InvalidAmountException;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

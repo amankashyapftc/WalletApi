@@ -65,4 +65,11 @@ public class ErrorHandler {
         return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler(CurrencyMismatchException.class)
+    public ResponseEntity<ErrorDetails> currencyMismatchExceptionHandler(CurrencyMismatchException exception, WebRequest request){
+        ErrorDetails err = new ErrorDetails(LocalDateTime.now(), exception.getMessage(), request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(err, HttpStatus.BAD_REQUEST);
+    }
+
 }

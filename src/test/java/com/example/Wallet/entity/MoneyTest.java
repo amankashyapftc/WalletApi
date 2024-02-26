@@ -38,7 +38,7 @@ public class MoneyTest {
 
         money.add(new Money(100, Currency.USD));
 
-        assertEquals(new Money(8310, Currency.INR), money);
+        assertEquals(new Money(8310.0, Currency.INR), money);
     }
 
 
