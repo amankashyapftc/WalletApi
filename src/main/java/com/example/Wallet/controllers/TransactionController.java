@@ -20,7 +20,7 @@ public class TransactionController {
     private TransactionService transactionService;
 
     @PostMapping("/transfer")
-    public ResponseEntity<ResponseMessageModel> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, WalletNotFoundException, SameWalletsForTransactionException, CurrencyMismatchException {
+    public ResponseEntity<ResponseMessageModel> transact(@RequestBody TransactionRequestModel transactionRequestModel) throws InsufficientBalanceException, InvalidAmountException, UserNotFoundException, WalletNotFoundException, SameWalletsForTransactionException {
         String response = transactionService.transact(transactionRequestModel);
         return new ResponseEntity<>(new ResponseMessageModel(response), HttpStatus.ACCEPTED);
     }

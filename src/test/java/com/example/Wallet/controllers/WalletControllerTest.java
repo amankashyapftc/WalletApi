@@ -52,7 +52,7 @@ class WalletControllerTest {
         WalletResponseModel responseModel = new WalletResponseModel(1L,new Money(100, Currency.INR));
         when(walletService.deposit(anyLong(), anyString(), any())).thenReturn(responseModel);
 
-        mockMvc.perform(put("/wallet/1/deposit")
+        mockMvc.perform(put("/wallets/1/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestModel)))
                 .andExpect(status().isAccepted())
@@ -81,7 +81,7 @@ class WalletControllerTest {
         WalletResponseModel responseModel = new WalletResponseModel(1L, new Money(50, Currency.INR));
         when(walletService.withdraw(anyLong(), anyString(), any())).thenReturn(responseModel);
 
-        mockMvc.perform(put("/wallet/1/withdraw")
+        mockMvc.perform(put("/wallets/1/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
                 .andExpect(status().isAccepted())
@@ -108,7 +108,7 @@ class WalletControllerTest {
         WalletResponseModel secondWallet = new WalletResponseModel();
         when(walletService.getAllWallets()).thenReturn(Arrays.asList(firstWallet, secondWallet));
 
-        MvcResult mockResult = mockMvc.perform(get("/wallet")
+        MvcResult mockResult = mockMvc.perform(get("/wallets")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andReturn();
         String responseContent = mockResult.getResponse().getContentAsString();
@@ -124,7 +124,7 @@ class WalletControllerTest {
         WalletResponseModel secondWallet = new WalletResponseModel();
         when(walletService.getAllWallets()).thenReturn(Arrays.asList(firstWallet, secondWallet));
 
-        mockMvc.perform(get("/wallet")
+        mockMvc.perform(get("/wallets")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
         verify(walletService, never()).getAllWallets();

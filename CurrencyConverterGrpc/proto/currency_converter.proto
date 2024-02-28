@@ -1,21 +1,25 @@
-syntax = "proto3";
-
-package currencyconversion;
-option go_package = "/currencyconversion";
-
-service Converter {
-    rpc ConvertCurrency (ConvertRequest) returns (ConvertResponse) {}
+syntax="proto3";
+ 
+package proto;
+ 
+option go_package="wallet/currency-converter";
+ 
+ 
+message Money {
+   string currency =1;
+   float amount =2;
 }
-
+ 
 message ConvertRequest {
-    string base_currency = 1;
-    string target_currency = 2;
-    double amount = 3;
+   Money money = 1;
+   string sourceCurrency =2;
+   string targetCurrency =3;
 }
-
 message ConvertResponse {
-    double converted_amount = 1;
-    string currency = 2;
-    double service_fee = 3;
-    double base_currency_service_fee = 4;
+   Money money =1;
+   Money serviceCharge =2;
+}
+ 
+service ConverterService {
+   rpc ConvertMoney(ConvertRequest) returns (ConvertResponse) {}
 }

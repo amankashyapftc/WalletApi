@@ -22,7 +22,7 @@ public class SecurityConfig {
 
         http.csrf().disable()
                 .authorizeHttpRequests((authorize) -> {
-                    authorize.requestMatchers(HttpMethod.POST,"/user").permitAll().
+                    authorize.requestMatchers(HttpMethod.POST,"/users").permitAll().
                             requestMatchers(HttpMethod.POST, "/wallets").denyAll()
                             .anyRequest().authenticated();
                 }).headers(headers -> headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::disable)).httpBasic(Customizer.withDefaults());

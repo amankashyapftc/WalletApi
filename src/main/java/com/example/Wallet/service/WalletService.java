@@ -1,8 +1,11 @@
 package com.example.Wallet.service;
 
+import com.example.Wallet.entities.Money;
 import com.example.Wallet.entities.User;
 import com.example.Wallet.entities.Wallet;
+import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.*;
+import com.example.Wallet.grpcClient.CurrencyConverterClient;
 import com.example.Wallet.responseModels.WalletResponseModel;
 import com.example.Wallet.repository.UserRepository;
 import com.example.Wallet.repository.WalletRepository;
@@ -21,6 +24,7 @@ public class WalletService {
     @Autowired
     private UserRepository userRepository;
 
+
     public Wallet create(Wallet wallet) {
         return walletRepository.save(wallet);
     }
@@ -34,11 +38,12 @@ public class WalletService {
         return response;
     }
 
+
     public WalletResponseModel deposit(Long walletId, String username, WalletRequestModel requestModel) throws InvalidAmountException, AuthenticationFailedException, WalletNotFoundException {
         User user = userRepository.findByUserName(username).orElseThrow(() -> new AuthenticationFailedException("Username or password does not match."));
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet id does not match."));
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet Id not match"));
         if(!user.getWallets().contains(wallet))
-            throw new AuthenticationFailedException("Wallet Id does not match.");
+            throw new AuthenticationFailedException("Wallet Id not match");
 
         wallet.deposit(requestModel.getMoney());
 
@@ -46,11 +51,12 @@ public class WalletService {
         return new WalletResponseModel(walletId, wallet.getMoney());
     }
 
+
     public WalletResponseModel withdraw(Long walletId, String username, WalletRequestModel requestModel) throws InsufficientBalanceException, InvalidAmountException, AuthenticationFailedException, WalletNotFoundException {
         User user = userRepository.findByUserName(username).orElseThrow(() -> new AuthenticationFailedException("Username or password does not match."));
-        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet Id does not match."));
+        Wallet wallet = walletRepository.findById(walletId).orElseThrow(() -> new WalletNotFoundException("Wallet Id not match"));
         if(!user.getWallets().contains(wallet))
-            throw new AuthenticationFailedException("Wallet Id does not match.");
+            throw new AuthenticationFailedException("Wallet Id not match");
 
         wallet.withdraw(requestModel.getMoney());
 

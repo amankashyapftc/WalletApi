@@ -1,55 +1,79 @@
 package main
 
 import (
-	currency_conversion "CurrencyConverterGrpc/proto"
+	pb "CurrencyConverterGrpc/proto"
+	"context"
+	"flag"
+	"fmt"
 	"log"
 	"net"
-	"os"
-	"os/signal"
-	"syscall"
 
-	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
 )
 
-func main() {
-	// Start gRPC server
-	go func() {
-		if err := createGrpcServer(); err != nil {
-			log.Fatalf("Failed to start gRPC server: %v", err)
-		}
-	}()
+type Currency string
 
-	// Start HTTP server
-	router := gin.Default()
-	router.GET("/health", func(c *gin.Context) {
-		c.String(200, "health")
-	})
+const (
+	INR Currency = "INR"
+	USD Currency = "USD"
+)
 
-	go func() {
-		if err := router.Run(":8081"); err != nil {
-			log.Fatalf("Failed to start HTTP server: %v", err)
-		}
-	}()
-
-	// Wait for termination signal
-	sigCh := make(chan os.Signal, 1)
-	signal.Notify(sigCh, syscall.SIGINT, syscall.SIGTERM)
-	<-sigCh
-	log.Println("Received termination signal. Shutting down servers...")
+var ConversionFactorMap = map[Currency]float32{
+	INR: 1.0,
+	USD: 83.10,
 }
 
-func createGrpcServer() error {
-	lis, err := net.Listen("tcp", ":9090")
-	if err != nil {
-		return err
+func (c Currency) GetConversionFactor() float32 {
+	return ConversionFactorMap[c]
+}
+
+type server struct {
+	pb.UnimplementedConverterServiceServer
+}
+
+func (s *server) ConvertMoney(ctx context.Context, req *pb.ConvertRequest) (*pb.ConvertResponse, error) {
+	log.Printf("Inside convert function.")
+	currency := req.Money.Currency
+	amount := req.Money.Amount
+	targetCurrency := req.TargetCurrency
+	sourceCurrency := req.SourceCurrency
+
+	convertedAmount := amount
+	serviceCharge := &pb.Money{Currency: "INR", Amount: 0.0}
+	if currency != targetCurrency || currency != sourceCurrency {
+		convertedAmount = amount / Currency(targetCurrency).GetConversionFactor() * Currency(currency).GetConversionFactor()
+		serviceCharge = &pb.Money{Currency: "INR", Amount: 10.0}
 	}
-	defer lis.Close()
 
-	grpcServer := grpc.NewServer()
-	converterServer := currency_conversion.Server{}
-	currency_conversion.RegisterConverterServer(grpcServer, &converterServer)
+	res := &pb.ConvertResponse{
+		Money: &pb.Money{
+			Currency: targetCurrency,
+			Amount:   convertedAmount,
+		},
+		ServiceCharge: serviceCharge,
+	}
+	return res, nil
+}
 
-	log.Println("gRPC server started on port 9090")
-	return grpcServer.Serve(lis)
+var (
+	port = flag.Int("port", 9090, "gRPC server port")
+)
+
+func main() {
+	fmt.Println("gRPC server started")
+
+	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))
+
+	if err != nil {
+		log.Fatalf("Failed to listen: %v", err)
+	}
+
+	s := grpc.NewServer()
+	pb.RegisterConverterServiceServer(s, &server{})
+
+	log.Printf("Server listening at %v", lis.Addr())
+
+	if err := s.Serve(lis); err != nil {
+		log.Fatalf("failed to serve : %v", err)
+	}
 }

@@ -34,15 +34,20 @@ public class Transaction {
 
     private Long receiverWalletId;
 
-    private double serviceFees;
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "amount", column = @Column(name = "service_charge")),
+            @AttributeOverride(name = "currency", column = @Column(name = "service_charge_currency"))
+    })
+    private Money serviceCharge;
 
-    public Transaction(LocalDateTime timestamp, Money money, User sender, Long senderWalletId, User receiver, Long receiverWalletId,Double serviceFees) {
+    public Transaction(LocalDateTime timestamp, Money money, User sender, Long senderWalletId, User receiver, Long receiverWalletId, Money serviceCharge) {
         this.timestamp = timestamp;
         this.money = money;
         this.sender = sender;
         this.senderWalletId = senderWalletId;
         this.receiver = receiver;
         this.receiverWalletId = receiverWalletId;
-        this.serviceFees = serviceFees;
+        this.serviceCharge = serviceCharge;
     }
 }

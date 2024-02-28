@@ -4,7 +4,7 @@
 // - protoc             v4.25.3
 // source: proto/currency_converter.proto
 
-package currencyconversion
+package currency_converter
 
 import (
 	context "context"
@@ -18,86 +18,86 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// ConverterClient is the client API for Converter service.
+// ConverterServiceClient is the client API for ConverterService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type ConverterClient interface {
-	ConvertCurrency(ctx context.Context, in *ConvertRequest, opts ...grpc.CallOption) (*ConvertResponse, error)
+type ConverterServiceClient interface {
+	ConvertMoney(ctx context.Context, in *ConvertRequest, opts ...grpc.CallOption) (*ConvertResponse, error)
 }
 
-type converterClient struct {
+type converterServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewConverterClient(cc grpc.ClientConnInterface) ConverterClient {
-	return &converterClient{cc}
+func NewConverterServiceClient(cc grpc.ClientConnInterface) ConverterServiceClient {
+	return &converterServiceClient{cc}
 }
 
-func (c *converterClient) ConvertCurrency(ctx context.Context, in *ConvertRequest, opts ...grpc.CallOption) (*ConvertResponse, error) {
+func (c *converterServiceClient) ConvertMoney(ctx context.Context, in *ConvertRequest, opts ...grpc.CallOption) (*ConvertResponse, error) {
 	out := new(ConvertResponse)
-	err := c.cc.Invoke(ctx, "/currencyconversion.Converter/ConvertCurrency", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/proto.ConverterService/ConvertMoney", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// ConverterServer is the server API for Converter service.
-// All implementations must embed UnimplementedConverterServer
+// ConverterServiceServer is the server API for ConverterService service.
+// All implementations must embed UnimplementedConverterServiceServer
 // for forward compatibility
-type ConverterServer interface {
-	ConvertCurrency(context.Context, *ConvertRequest) (*ConvertResponse, error)
-	mustEmbedUnimplementedConverterServer()
+type ConverterServiceServer interface {
+	ConvertMoney(context.Context, *ConvertRequest) (*ConvertResponse, error)
+	mustEmbedUnimplementedConverterServiceServer()
 }
 
-// UnimplementedConverterServer must be embedded to have forward compatible implementations.
-type UnimplementedConverterServer struct {
+// UnimplementedConverterServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedConverterServiceServer struct {
 }
 
-func (UnimplementedConverterServer) ConvertCurrency(context.Context, *ConvertRequest) (*ConvertResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConvertCurrency not implemented")
+func (UnimplementedConverterServiceServer) ConvertMoney(context.Context, *ConvertRequest) (*ConvertResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConvertMoney not implemented")
 }
-func (UnimplementedConverterServer) mustEmbedUnimplementedConverterServer() {}
+func (UnimplementedConverterServiceServer) mustEmbedUnimplementedConverterServiceServer() {}
 
-// UnsafeConverterServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to ConverterServer will
+// UnsafeConverterServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to ConverterServiceServer will
 // result in compilation errors.
-type UnsafeConverterServer interface {
-	mustEmbedUnimplementedConverterServer()
+type UnsafeConverterServiceServer interface {
+	mustEmbedUnimplementedConverterServiceServer()
 }
 
-func RegisterConverterServer(s grpc.ServiceRegistrar, srv ConverterServer) {
-	s.RegisterService(&Converter_ServiceDesc, srv)
+func RegisterConverterServiceServer(s grpc.ServiceRegistrar, srv ConverterServiceServer) {
+	s.RegisterService(&ConverterService_ServiceDesc, srv)
 }
 
-func _Converter_ConvertCurrency_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _ConverterService_ConvertMoney_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ConvertRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(ConverterServer).ConvertCurrency(ctx, in)
+		return srv.(ConverterServiceServer).ConvertMoney(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/currencyconversion.Converter/ConvertCurrency",
+		FullMethod: "/proto.ConverterService/ConvertMoney",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ConverterServer).ConvertCurrency(ctx, req.(*ConvertRequest))
+		return srv.(ConverterServiceServer).ConvertMoney(ctx, req.(*ConvertRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// Converter_ServiceDesc is the grpc.ServiceDesc for Converter service.
+// ConverterService_ServiceDesc is the grpc.ServiceDesc for ConverterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var Converter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "currencyconversion.Converter",
-	HandlerType: (*ConverterServer)(nil),
+var ConverterService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.ConverterService",
+	HandlerType: (*ConverterServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ConvertCurrency",
-			Handler:    _Converter_ConvertCurrency_Handler,
+			MethodName: "ConvertMoney",
+			Handler:    _ConverterService_ConvertMoney_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

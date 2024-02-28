@@ -29,6 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.Wallet.constants.Constants.SERVICE_CHARGE_IN_INR;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
@@ -189,8 +190,8 @@ public class TransactionServiceTest {
         when(authentication.getName()).thenReturn("sender");
         when(securityContext.getAuthentication()).thenReturn(authentication);
         SecurityContextHolder.setContext(securityContext);
-        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR), sender, 1L,  receiver,2L,0.0);
-        Transaction secondTransaction = new Transaction(LocalDateTime.now(),new Money(200, Currency.INR), sender, 1L,receiver, 2L,0.0);
+        Transaction firstTransaction = new Transaction(1L,LocalDateTime.now(), new Money(100, Currency.INR), sender, 1L,  receiver,2L,SERVICE_CHARGE_IN_INR);
+        Transaction secondTransaction = new Transaction(2L,LocalDateTime.now(),new Money(200, Currency.INR), sender, 1L,receiver, 2L,SERVICE_CHARGE_IN_INR);
         List<Transaction> transactions = Arrays.asList(firstTransaction, secondTransaction);
         when(userRepository.findByUserName("sender")).thenReturn(Optional.of(sender));
         when(transactionRepository.findTransactionsOfUser(sender)).thenReturn(transactions);
@@ -208,7 +209,7 @@ public class TransactionServiceTest {
         User receiver = new User("receiver", "receiverPassword", Country.INDIA);
         LocalDateTime startDate = LocalDate.of(2022, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(2022, 1, 31).atTime(23, 59, 59);
-        Transaction transaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
+        Transaction transaction = new Transaction(1L,LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,SERVICE_CHARGE_IN_INR);
         List<Transaction> transactions = new ArrayList<>();
         transactions.add(transaction);
         when(authentication.getName()).thenReturn("sender");
@@ -229,8 +230,8 @@ public class TransactionServiceTest {
         User receiver = new User("receiver", "receiverPassword", Country.INDIA);
         LocalDateTime startDate = LocalDate.of(2022, 1, 1).atStartOfDay();
         LocalDateTime endDate = LocalDate.of(2022, 1, 31).atTime(23, 59, 59);
-        Transaction firstTransaction = new Transaction(LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
-        Transaction secondTransaction = new Transaction(LocalDateTime.now().minusDays(2), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,0.0);
+        Transaction firstTransaction = new Transaction(1L,LocalDateTime.now(), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,SERVICE_CHARGE_IN_INR);
+        Transaction secondTransaction = new Transaction(2L,LocalDateTime.now().minusDays(2), new Money(100, Currency.INR) , sender, 1L, receiver, 2L,SERVICE_CHARGE_IN_INR);
         List<Transaction> allTransactions = new ArrayList<>();
         allTransactions.add(firstTransaction);
         allTransactions.add(secondTransaction);

@@ -3,10 +3,14 @@ package com.example.Wallet.entities;
 import com.example.Wallet.enums.Currency;
 import com.example.Wallet.exceptions.InsufficientBalanceException;
 import com.example.Wallet.exceptions.InvalidAmountException;
+
+import com.example.Wallet.grpcClient.CurrencyConverterClient;
 import jakarta.persistence.Embeddable;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
+import proto.ConvertResponse;
+
 
 @Getter
 @Setter
@@ -15,28 +19,31 @@ import lombok.*;
 @EqualsAndHashCode
 @Embeddable
 public class Money {
+
     private double amount;
 
     @Enumerated(EnumType.STRING)
     private Currency currency;
 
     public void add(Money money) throws InvalidAmountException {
-        if(money.getAmount()<= 0)
-            throw new InvalidAmountException("Amount must be positive.");
+        CurrencyConverterClient converter = new CurrencyConverterClient();
+        ConvertResponse res = converter.convertMoney(money, this.currency ,this.currency);
+        if(res.getMoney().getAmount() <= 0)
+            throw new InvalidAmountException("Money Should be greater than 0");
 
-        this.amount += money.getAmount();
-        this.amount = Math.round(this.amount * 100.0) / 100.0;
-
+        this.amount += res.getMoney().getAmount();
     }
 
     public void subtract(Money money) throws InvalidAmountException, InsufficientBalanceException {
-        if(money.getAmount() > this.amount)
-            throw new InsufficientBalanceException("Insufficient Balance..");
+        CurrencyConverterClient converter = new CurrencyConverterClient();
+        ConvertResponse res = converter.convertMoney(money, this.currency ,this.currency);
 
-        if(money.getAmount()<= 0)
-            throw new InvalidAmountException("Amount must be positive.");
+        if(res.getMoney().getAmount() > this.amount)
+            throw new InsufficientBalanceException("Insufficient Balance");
 
-        this.amount -= money.getAmount();
-        this.amount = Math.round(this.amount * 100.0) / 100.0;
+        if(res.getMoney().getAmount() <= 0)
+            throw new InvalidAmountException("Money Should be greater than 0");
+
+        this.amount -= res.getMoney().getAmount();
     }
 }

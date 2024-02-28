@@ -51,7 +51,7 @@ public class UserControllersTest {
 
         when(userService.register(userRequestModel)).thenReturn(user);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestModel)))
                 .andExpect(status().isCreated());
@@ -64,7 +64,7 @@ public class UserControllersTest {
 
         when(userService.register(any(UserRequestModel.class))).thenThrow(UserAlreadyExistsException.class);
 
-        mockMvc.perform(post("/user")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(userRequestModel)))
                 .andExpect(status().isBadRequest());
@@ -75,7 +75,7 @@ public class UserControllersTest {
     void testUserDeleted() throws Exception {
         when(userService.delete()).thenReturn("User Delete SuccessFully.");
 
-        mockMvc.perform(delete("/user")
+        mockMvc.perform(delete("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isAccepted())
                 .andExpect(jsonPath("$.message").value("User Delete SuccessFully."));
@@ -90,7 +90,7 @@ public class UserControllersTest {
 
         when(userService.delete()).thenThrow(new UserNotFoundException(errorMessage));
 
-        mockMvc.perform(delete("/user")
+        mockMvc.perform(delete("/users")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(userService, times(1)).delete();
@@ -102,7 +102,7 @@ public class UserControllersTest {
         User user = new User(1L, "user", "pass",Country.INDIA, Arrays.asList(new Wallet(1L, new Money(0.0,Currency.INR)), new Wallet(2L, new Money(0.0, Currency.INR))));
         when(userService.addWallet(1L)).thenReturn(user);
 
-        mockMvc.perform(put("/user/1/wallet")
+        mockMvc.perform(put("/users/1/wallet")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.wallets.[1]").exists());
@@ -115,7 +115,7 @@ public class UserControllersTest {
         User user = new User(1L, "user", "pass",Country.INDIA, Arrays.asList(new Wallet(1L, new Money(0.0,Currency.INR))));
         when(userService.addWallet(2L)).thenThrow(UserNotFoundException.class);
 
-        mockMvc.perform(put("/user/2/wallet")
+        mockMvc.perform(put("/users/2/wallet")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(userService, times(1)).addWallet(2L);

@@ -1,42 +1,30 @@
 package com.example.Wallet.grpcClient;
 
-import currencyconversion.ConvertRequest;
-import currencyconversion.ConvertResponse;
-import currencyconversion.ConverterGrpc;
+import com.example.Wallet.entities.Money;
+import com.example.Wallet.enums.Currency;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import proto.ConvertRequest;
+import proto.ConvertResponse;
+import proto.ConverterServiceGrpc;
 
-@Service
+
 public class CurrencyConverterClient {
-    @Value("${helloGrpcServiceHost:localhost}")
-    private String helloGrpcServiceHost;
 
-    @Value("${helloGrpcServicePort:9090}")
-    private int helloGrpcServicePort;
+    private final String converterHost = "localhost";
 
+    private final int port = 9090;
 
 
-    private final static Logger log = LoggerFactory.getLogger(CurrencyConverterClient.class);
 
+    public ConvertResponse convertMoney(Money money, Currency sourceCurrency, Currency targetCurrency){
+        ManagedChannel channel = ManagedChannelBuilder.forAddress(converterHost, port)
+                .usePlaintext().build();
 
-    public ConvertResponse convertCurrency(String baseCurrency, String targetCurrency, double amount) {
-        ManagedChannel channel = ManagedChannelBuilder.forAddress(helloGrpcServiceHost, helloGrpcServicePort)
-                .usePlaintext()
-                .build();
-
-        ConverterGrpc.ConverterBlockingStub stub = ConverterGrpc.newBlockingStub(channel);
-        ConvertRequest request = ConvertRequest.newBuilder()
-                .setBaseCurrency(baseCurrency)
-                .setTargetCurrency(targetCurrency)
-                .setAmount(amount)
-                .build();
-
-        ConvertResponse response = stub.convertCurrency(request);
-        log.info("Server message: {}",response);
+        ConverterServiceGrpc.ConverterServiceBlockingStub stub = ConverterServiceGrpc.newBlockingStub(channel);
+        ConvertRequest request = ConvertRequest.newBuilder().setMoney(proto.Money.newBuilder().setAmount((float) money.getAmount()).setCurrency(money.getCurrency().toString()).build())
+                .setSourceCurrency(sourceCurrency.toString()).setTargetCurrency(targetCurrency.toString()).build();
+        var response = stub.convertMoney(request);
         channel.shutdown();
         return response;
     }
