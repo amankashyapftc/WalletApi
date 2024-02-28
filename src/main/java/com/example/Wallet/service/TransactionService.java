@@ -85,7 +85,7 @@ public class TransactionService {
         senderWallet.withdraw(requestModel.getMoney());
 
         if(serviceCharge > 0.0)
-            requestModel.getMoney().subtract(new Money(serviceCharge, requestModel.getMoney().getCurrency()));
+            requestModel.getMoney().subtract(new Money(serviceCharge, receiverWallet.getMoney().getCurrency()));
 
         receiverWallet.deposit(requestModel.getMoney());
 

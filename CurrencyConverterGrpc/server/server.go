@@ -42,7 +42,7 @@ func (s *server) ConvertMoney(ctx context.Context, req *pb.ConvertRequest) (*pb.
 	serviceCharge := &pb.Money{Currency: "INR", Amount: 0.0}
 	if currency != targetCurrency || currency != sourceCurrency {
 		convertedAmount = amount / Currency(targetCurrency).GetConversionFactor() * Currency(currency).GetConversionFactor()
-		serviceCharge = &pb.Money{Currency: "INR", Amount: 10.0}
+		serviceCharge = &pb.Money{Currency: targetCurrency, Amount: 10.0 / Currency(targetCurrency).GetConversionFactor()}
 	}
 
 	res := &pb.ConvertResponse{
